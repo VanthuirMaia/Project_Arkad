@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Nova Renda{% endblock %}
+{% block content %}
+<h3>{{ renda and "Editar Renda" or "Adicionar Renda" }}</h3>
+
+<form method="POST">
+  <div class="mb-3">
+    <label class="form-label">Descrição</label>
+    <input type="text" name="descricao" class="form-control" value="{{ renda.descricao if renda else '' }}" required>
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label">Tipo</label>
+    <select name="tipo" class="form-select">
+      {% set tipos = ["Salário", "Presente", "Prêmio", "Extra", "Renda Passiva"] %}
+      {% for t in tipos %}
+        <option value="{{ t }}" {% if renda and renda.tipo == t %}selected{% endif %}>{{ t }}</option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label">Valor (R$)</label>
+    <input type="number" step="0.01" name="valor" class="form-control" value="{{ renda.valor if renda else '' }}" required>
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label">Data</label>
+    <input type="date" name="data" class="form-control"
+           value="{{ renda.data if renda else current_date }}">
+  </div>
+
+  <button type="submit" class="btn btn-success">Salvar</button>
+  <a href="{{ url_for('renda.listar_rendas') }}" class="btn btn-secondary">Voltar</a>
+</form>
+{% endblock %}

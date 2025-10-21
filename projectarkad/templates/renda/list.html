@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block title %}Rendas{% endblock %}
+{% block content %}
+
+<h3 class="mb-3">Histórico de Rendas</h3>
+
+<!-- Filtros -->
+<form method="GET" class="row g-3 align-items-end mb-4">
+  <div class="col-md-3">
+    <label class="form-label">Data Início</label>
+    <input type="date" name="inicio" value="{{ data_inicio }}" class="form-control">
+  </div>
+  <div class="col-md-3">
+    <label class="form-label">Data Fim</label>
+    <input type="date" name="fim" value="{{ data_fim }}" class="form-control">
+  </div>
+  <div class="col-md-3">
+    <label class="form-label">Tipo</label>
+    <select name="tipo" class="form-select">
+      <option {% if not tipo_filtro or tipo_filtro == "Todos" %}selected{% endif %}>Todos</option>
+      {% for t in tipos %}
+        <option value="{{ t }}" {% if tipo_filtro == t %}selected{% endif %}>{{ t }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-md-3">
+    <button type="submit" class="btn btn-primary w-100">Filtrar</button>
+  </div>
+</form>
+
+<!-- Totais -->
+<div class="alert alert-info">
+  <b>Total geral:</b> R$ {{ total_geral|round(2) }}<br>
+  <b>Total de hoje:</b> R$ {{ total_hoje|round(2) }}
+</div>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="alert alert-{{ category }}">{{ message }}</div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
+<!-- Tabela -->
+<table class="table table-striped align-middle">
+  <thead>
+    <tr>
+      <th>Data</th>
+      <th>Descrição</th>
+      <th>Tipo</th>
+      <th>Valor</th>
+      <th class="text-center">Ações</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for r in rendas %}
+    <tr>
+      <td>{{ r.data.strftime("%d/%m/%Y") }}</td>
+      <td>{{ r.descricao }}</td>
+      <td>{{ r.tipo }}</td>
+      <td>R$ {{ r.valor|round(2) }}</td>
+      <td class="text-center">
+        <a href="{{ url_for('renda.editar_renda', id=r.id) }}" class="btn btn-sm btn-warning">Editar</a>
+        <form action="{{ url_for('renda.excluir_renda', id=r.id) }}" method="POST" style="display:inline;">
+          <button class="btn btn-sm btn-danger" onclick="return confirm('Excluir esta renda?')">Excluir</button>
+        </form>
+      </td>
+    </tr>
+    {% else %}
+    <tr><td colspan="5" class="text-center text-muted">Nenhuma renda encontrada.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<a href="{{ url_for('renda.nova_renda') }}" class="btn btn-success">Nova Renda</a>
+<a href="{{ url_for('main.index') }}" class="btn btn-secondary">Voltar</a>
+
+{% endblock %}

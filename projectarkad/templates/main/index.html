@@ -1,0 +1,24 @@
+{% extends "base.html" %} {% block title %}Dashboard{% endblock %} {% block
+content %}
+<h3 class="mb-3">Resumo Financeiro</h3>
+
+{% if total > 0 %}
+<div class="card p-3 shadow-sm mb-3">
+  <p><b>Renda total:</b> R$ {{ total|round(2) }}</p>
+  <ul>
+    <li>Despesas (70%): <b>R$ {{ calc.despesas }}</b></li>
+    <li>Dívidas (20%): <b>R$ {{ calc.dividas }}</b></li>
+    <li>Reserva (10%): <b>R$ {{ calc.reserva }}</b></li>
+  </ul>
+</div>
+{% else %}
+<p>Nenhuma renda cadastrada.</p>
+{% endif %}
+
+<a href="{{ url_for('renda.nova_renda') }}" class="btn btn-primary"
+  >Adicionar Renda</a
+>
+<a href="{{ url_for('renda.listar_rendas') }}" class="btn btn-secondary"
+  >Listar Rendas</a
+>
+{% endblock %}
