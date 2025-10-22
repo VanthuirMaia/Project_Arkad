@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+  <h4 class="mb-3">
+    {% if despesa %}Editar Despesa{% else %}Nova Despesa{% endif %}
+  </h4>
+
+  <form method="POST" 
+        action="{{ url_for('despesa.editar_despesa', id=despesa.id) if despesa else url_for('despesa.nova_despesa') }}">
+    
+    <div class="mb-3">
+      <label class="form-label">Descrição</label>
+      <input type="text" name="descricao" class="form-control" 
+             value="{{ despesa.descricao if despesa else '' }}" required>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Valor (R$)</label>
+      <input type="number" step="0.01" name="valor" class="form-control"
+             value="{{ despesa.valor if despesa else '' }}" required>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Categoria</label>
+      <select name="categoria" class="form-select" required>
+        {% for cat in ['Alimentação','Transporte','Moradia','Lazer','Saúde','Educação','Outros'] %}
+        <option value="{{ cat }}" {% if despesa and despesa.categoria == cat %}selected{% endif %}>{{ cat }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Data</label>
+      <input type="date" name="data" class="form-control"
+             value="{{ despesa.data.strftime('%Y-%m-%d') if despesa else date.today() }}" required>
+    </div>
+
+    <div class="d-flex gap-2">
+      <button type="submit" class="btn btn-success flex-fill">
+        {% if despesa %}Salvar Alterações{% else %}Adicionar Despesa{% endif %}
+      </button>
+      <a href="{{ url_for('despesa.listar_despesas') }}" class="btn btn-secondary flex-fill">Voltar</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

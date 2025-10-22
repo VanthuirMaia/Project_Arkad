@@ -1,29 +1,27 @@
 {% extends "base.html" %}
-{% block title %}Histórico de Rendas{% endblock %}
 {% block content %}
 <div class="container mt-4">
-  <h4 class="mb-3">Histórico de Rendas</h4>
+  <h4 class="mb-3">Histórico de Despesas</h4>
 
   <!-- FILTROS -->
   <form method="GET" class="row g-2 mb-4">
     <div class="col-12 col-md-3">
-      <label class="form-label small text-muted mb-1">Tipo</label>
-      <select name="tipo" class="form-select">
-        <option value="Todos" {% if not tipo_filtro or tipo_filtro == "Todos" %}selected{% endif %}>Todos</option>
-        {% for t in tipos %}
-          <option value="{{ t }}" {% if tipo_filtro == t %}selected{% endif %}>{{ t }}</option>
+      <label class="form-label small text-muted mb-1">Categoria</label>
+      <select name="categoria" class="form-select">
+        {% for cat in categorias %}
+          <option value="{{ cat }}" {% if cat == categoria_selecionada %}selected{% endif %}>{{ cat }}</option>
         {% endfor %}
       </select>
     </div>
 
     <div class="col-6 col-md-3">
       <label class="form-label small text-muted mb-1">Data início</label>
-      <input type="date" name="inicio" class="form-control" value="{{ data_inicio or '' }}">
+      <input type="date" name="data_inicio" class="form-control" value="{{ data_inicio or '' }}">
     </div>
 
     <div class="col-6 col-md-3">
       <label class="form-label small text-muted mb-1">Data fim</label>
-      <input type="date" name="fim" class="form-control" value="{{ data_fim or '' }}">
+      <input type="date" name="data_fim" class="form-control" value="{{ data_fim or '' }}">
     </div>
 
     <div class="col-12 col-md-3 d-flex align-items-end">
@@ -31,7 +29,7 @@
     </div>
   </form>
 
-  {% if tipo_filtro != "Todos" or data_inicio or data_fim %}
+  {% if categoria_selecionada or data_inicio or data_fim %}
   <div class="alert alert-info py-2">
     <small>
       🔎 Total no filtro atual: <strong>R$ {{ '%.2f'|format(total_filtrado) }}</strong>
@@ -59,46 +57,48 @@
   </div>
 
   <!-- TABELA -->
-   <div class="table-responsive">
+  <div class="table-responsive">
     <table class="table table-striped table-hover align-middle">
       <thead>
         <tr>
           <th>Data</th>
           <th>Descrição</th>
-          <th>Tipo</th>
+          <th>Categoria</th>
           <th>Valor (R$)</th>
           <th style="width: 130px;">Ações</th>
         </tr>
       </thead>
       <tbody>
-        {% for r in rendas %}
+        {% for despesa in despesas %}
         <tr>
-          <td>{{ r.data.strftime('%d/%m/%Y') }}</td>
-          <td>{{ r.descricao }}</td>
-          <td>{{ r.tipo }}</td>
-          <td>R$ {{ '%.2f'|format(r.valor) }}</td>
+          <td>{{ despesa.data.strftime('%d/%m/%Y') }}</td>
+          <td>{{ despesa.descricao }}</td>
+          <td>{{ despesa.categoria }}</td>
+          <td>R$ {{ '%.2f'|format(despesa.valor) }}</td>
           <td>
             <div class="btn-group" role="group">
-              <a href="{{ url_for('renda.editar_renda', id=r.id) }}" class="btn btn-sm btn-warning text-white">
+              <a href="{{ url_for('despesa.editar_despesa', id=despesa.id) }}" class="btn btn-sm btn-warning text-white">
                 Editar
               </a>
-              <form action="{{ url_for('renda.excluir_renda', id=r.id) }}" method="POST" style="display:inline;">
-                <button class="btn btn-sm btn-danger" onclick="return confirm('Excluir esta renda?')">Excluir</button>
-              </form>
+              <a href="{{ url_for('despesa.excluir_despesa', id=despesa.id) }}" class="btn btn-sm btn-danger"
+                onclick="return confirm('Excluir esta despesa?');">
+                Excluir
+              </a>
             </div>
           </td>
         </tr>
         {% else %}
         <tr>
-          <td colspan="5" class="text-center text-muted">Nenhuma renda encontrada.</td>
+          <td colspan="5" class="text-center text-muted">Nenhuma despesa encontrada.</td>
         </tr>
         {% endfor %}
       </tbody>
     </table>
-   </div>
+  </div>
+
   <!-- BOTÕES -->
   <div class="d-flex gap-2 mt-3">
-    <a href="{{ url_for('renda.nova_renda') }}" class="btn btn-success flex-fill">Nova Renda</a>
+    <a href="{{ url_for('despesa.nova_despesa') }}" class="btn btn-success flex-fill">Nova Despesa</a>
     <a href="{{ url_for('main.index') }}" class="btn btn-secondary flex-fill">Voltar</a>
   </div>
 </div>

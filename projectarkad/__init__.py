@@ -23,10 +23,14 @@ def create_app():
     with app.app_context():
         db.create_all()
 
+    from projectarkad.routes.despesa_routes import despesa_bp
+
     # Importa rotas
     from .routes.main_routes import main_bp
     from .routes.renda_routes import renda_bp
     app.register_blueprint(main_bp)
     app.register_blueprint(renda_bp)
+    app.register_blueprint(despesa_bp)
+
 
     return app

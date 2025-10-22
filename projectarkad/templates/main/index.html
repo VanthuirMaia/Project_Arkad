@@ -1,24 +1,106 @@
-{% extends "base.html" %} {% block title %}Dashboard{% endblock %} {% block
-content %}
-<h3 class="mb-3">Resumo Financeiro</h3>
+{% extends "base.html" %} {% block content %}
 
-{% if total > 0 %}
-<div class="card p-3 shadow-sm mb-3">
-  <p><b>Renda total:</b> R$ {{ total|round(2) }}</p>
-  <ul>
-    <li>Despesas (70%): <b>R$ {{ calc.despesas }}</b></li>
-    <li>Dívidas (20%): <b>R$ {{ calc.dividas }}</b></li>
-    <li>Reserva (10%): <b>R$ {{ calc.reserva }}</b></li>
-  </ul>
+<div class="container py-4 text-center">
+  <!-- LOGO -->
+  <div class="text-center mb-3">
+    <img
+      src="{{ url_for('static', filename='img/logo2.png') }}"
+      alt="Logo ProjectArkad"
+      class="img-fluid"
+      style="max-width: 130px; height: auto"
+    />
+  </div>
+
+  <h4 class="fw-bold mb-2">💰 Arkad</h4>
+  <p class="text-muted small mb-4">
+    Controle suas finanças de forma simples e prática.
+  </p>
+
+  <!-- RESUMO FINANCEIRO -->
+  <div class="row g-2 justify-content-center mb-4">
+    <div class="col-12 col-sm-6 col-md-4">
+      <div class="card border-success shadow-sm">
+        <div class="card-body p-3">
+          <small class="text-muted d-block">Total Receitas</small>
+          <h6 class="text-success mb-0">
+            R$ {{ "%.2f"|format(total_rendas) }}
+          </h6>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-sm-6 col-md-4">
+      <div class="card border-danger shadow-sm">
+        <div class="card-body p-3">
+          <small class="text-muted d-block">Total Despesas</small>
+          <h6 class="text-danger mb-0">
+            R$ {{ "%.2f"|format(total_despesas) }}
+          </h6>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-sm-6 col-md-4">
+      <div class="card border-primary shadow-sm">
+        <div class="card-body p-3">
+          <small class="text-muted d-block">Saldo Atual</small>
+          {% if saldo >= 0 %}
+          <h6 class="text-success mb-0">R$ {{ "%.2f"|format(saldo) }}</h6>
+          {% else %}
+          <h6 class="text-danger mb-0">R$ {{ "%.2f"|format(saldo) }}</h6>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOTÕES PRINCIPAIS -->
+  <div class="row justify-content-center g-3 mb-4">
+    <div class="col-6 col-md-4">
+      <a
+        href="{{ url_for('renda.listar_rendas') }}"
+        class="btn btn-success w-100 shadow-sm py-3"
+      >
+        📈 Receitas
+      </a>
+    </div>
+    <div class="col-6 col-md-4">
+      <a
+        href="{{ url_for('despesa.listar_despesas') }}"
+        class="btn btn-danger w-100 shadow-sm py-3"
+      >
+        💸 Despesas
+      </a>
+    </div>
+  </div>
+
+  <!-- DISTRIBUIÇÃO 70/20/10 -->
+  {% if calc %}
+  <div class="card shadow-sm border-0 mx-auto mb-4" style="max-width: 420px">
+    <div class="card-body p-3">
+      <h6 class="text-muted mb-3">Distribuição 70/20/10</h6>
+      <p class="small mb-1">
+        🟢 70% para viver:
+        <strong>R$ {{ "%.2f"|format(calc['despesas']) }}</strong>
+      </p>
+      <p class="small mb-1">
+        🟡 20% para dívidas:
+        <strong>R$ {{ "%.2f"|format(calc['dividas']) }}</strong>
+      </p>
+      <p class="small mb-0">
+        🔵 10% para investir:
+        <strong>R$ {{ "%.2f"|format(calc['reserva']) }}</strong>
+      </p>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- RODAPÉ -->
+  <footer class="mt-4">
+    <p class="text-muted small mb-0">
+      Desenvolvido por <strong>Vanthuir Maia</strong> — ProjectArkad
+    </p>
+  </footer>
 </div>
-{% else %}
-<p>Nenhuma renda cadastrada.</p>
-{% endif %}
 
-<a href="{{ url_for('renda.nova_renda') }}" class="btn btn-primary"
-  >Adicionar Renda</a
->
-<a href="{{ url_for('renda.listar_rendas') }}" class="btn btn-secondary"
-  >Listar Rendas</a
->
 {% endblock %}
